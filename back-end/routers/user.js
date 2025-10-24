@@ -1,0 +1,24 @@
+
+const express = require("express");
+const {
+  addUser,
+  getUsers,
+  getUser,
+  updateUser,
+  deleteUser,
+  sendOtp,
+  verifyOtp
+} = require("../controllers/user");
+const router = express.Router();
+
+router.route("/users").post(addUser);
+router.route("/users").get(getUsers);
+router.route("/users/:id").get(getUser);
+router.route("/users/:id").put(updateUser);
+router.route("/users/:id").delete(deleteUser);
+
+
+router.post("/auth/send-otp", sendOtp);
+router.post("/auth/verify-otp", verifyOtp);
+
+module.exports = router;
