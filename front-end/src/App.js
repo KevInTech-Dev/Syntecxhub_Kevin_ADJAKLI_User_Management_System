@@ -42,7 +42,7 @@ function App() {
 
   const handleRegisterSubmit = async e => {
     e.preventDefault();
-    setMessage("Enregistrement en cours...");
+    setMessage("Recording in progress...");
     try {
       const res = await fetch(API_URL, {
         method: "POST",
@@ -51,14 +51,14 @@ function App() {
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage("Inscription réussie ! Vérifiez votre email pour l'OTP.");
+        setMessage("Registration successful! Check your email for the OTP.");
         setOtpForm({ ...otpForm, email: registerForm.email });
         setStep("otp");
       } else {
-        setMessage(data.msg || "Erreur lors de l'inscription.");
+        setMessage(data.msg || "Error during registration.");
       }
     } catch {
-      setMessage("Erreur serveur.");
+      setMessage("Server error.");
     }
   };
 
@@ -69,7 +69,7 @@ function App() {
 
   const handleOtpSubmit = async e => {
     e.preventDefault();
-    setMessage("Vérification...");
+    setMessage("Verification...");
     try {
       const res = await fetch("http://localhost:3000/api/v1/auth/verify-otp", {
         method: "POST",
@@ -78,21 +78,21 @@ function App() {
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage(data.msg || "OTP vérifié, authentification réussie !");
+        setMessage(data.msg || "OTP verified, authentication successful!");
         setStep("menu");
         fetchUsers();
       } else {
-        setMessage(data.msg || "Échec de la vérification OTP.");
+        setMessage(data.msg || "OTP check failed.");
       }
     } catch {
-      setMessage("Erreur serveur.");
+      setMessage("Server error.");
     }
   };
 
   // Afficher la liste des utilisateurs
   const handleShowUsers = () => {
     if (users.length === 0) {
-      setMessage("Aucun utilisateur inscrit pour le moment.");
+      setMessage("No registered users at the moment.");
     } else {
       setMessage("");
       setStep("list");
@@ -120,7 +120,7 @@ function App() {
 
   const handleEditSubmit = async e => {
     e.preventDefault();
-    setMessage("Modification en cours...");
+    setMessage("Running change...");
     try {
       const res = await fetch(`${API_URL}/${editForm._id}`, {
         method: "PUT",
@@ -129,11 +129,11 @@ function App() {
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage("Modification réussie !");
+        setMessage("Modification successful!");
         setStep("menu");
         fetchUsers();
       } else {
-        setMessage(data.msg || "Erreur lors de la modification.");
+        setMessage(data.msg || "Error while editing.");
       }
     } catch {
       setMessage("Erreur serveur.");
@@ -142,20 +142,20 @@ function App() {
 
   // Supprimer un utilisateur
   const handleDeleteUser = async user => {
-    if (!window.confirm(`Supprimer ${user.name} ?`)) return;
-    setMessage("Suppression en cours...");
+    if (!window.confirm(`Delete ${user.name} ?`)) return;
+    setMessage("Deletion in progress...");
     try {
       const res = await fetch(`${API_URL}/${user._id}`, { method: "DELETE" });
       const data = await res.json();
       if (res.ok) {
-        setMessage("Suppression réussie !");
+        setMessage("Deletion successful!");
         setStep("menu");
         fetchUsers();
       } else {
-        setMessage(data.msg || "Erreur lors de la suppression.");
+        setMessage(data.msg || "error deleting.");
       }
     } catch {
-      setMessage("Erreur serveur.");
+      setMessage("Server error.");
     }
   };
 
@@ -182,56 +182,56 @@ function App() {
 
       {step === "menu" && (
         <div style={{ display: "flex", flexDirection: "column", gap: 15 }}>
-          <button onClick={() => setStep("create")} style={btnStyle}>Créer un utilisateur</button>
-          <button onClick={handleShowUsers} style={btnStyle}>Afficher les utilisateurs</button>
+          <button onClick={() => setStep("create")} style={btnStyle}>create a new user</button>
+          <button onClick={handleShowUsers} style={btnStyle}>Show users</button>
           <button
-            onClick={() => users.length === 0 ? setMessage("Aucun utilisateur à modifier.") : setStep("list")}
+            onClick={() => users.length === 0 ? setMessage("No users to modify.") : setStep("list")}
             style={btnStyle}
-          >Modifier un utilisateur</button>
+          >Modify User</button>
           <button
-            onClick={() => users.length === 0 ? setMessage("Aucun utilisateur à supprimer.") : setStep("list")}
+            onClick={() => users.length === 0 ? setMessage("No users to delete.") : setStep("list")}
             style={btnStyle}
-          >Supprimer un utilisateur</button>
+          >Delete a user</button>
           {message && <div style={msgStyle}>{message}</div>}
         </div>
       )}
 
       {step === "create" && (
         <form onSubmit={handleRegisterSubmit} style={formStyle}>
-          <h3>Créer un utilisateur</h3>
-          <input name="name" placeholder="Nom" value={registerForm.name} onChange={handleRegisterChange} required style={inputStyle} />
-          <input name="address" placeholder="Adresse" value={registerForm.address} onChange={handleRegisterChange} required style={inputStyle} />
-          <input name="phone" placeholder="Téléphone" value={registerForm.phone} onChange={handleRegisterChange} required style={inputStyle} />
+          <h3>Create a new uer</h3>
+          <input name="name" placeholder="Name" value={registerForm.name} onChange={handleRegisterChange} required style={inputStyle} />
+          <input name="address" placeholder="Address" value={registerForm.address} onChange={handleRegisterChange} required style={inputStyle} />
+          <input name="phone" placeholder="Phone" value={registerForm.phone} onChange={handleRegisterChange} required style={inputStyle} />
           <input name="email" placeholder="Email" type="email" value={registerForm.email} onChange={handleRegisterChange} required style={inputStyle} />
-          <button type="submit" style={btnStyle}>S'inscrire</button>
-          <button type="button" onClick={handleBack} style={btnStyleSec}>Retour</button>
+          <button type="submit" style={btnStyle}>Sign up</button>
+          <button type="button" onClick={handleBack} style={btnStyleSec}>Return</button>
           <div style={msgStyle}>{message}</div>
         </form>
       )}
 
       {step === "otp" && (
         <form onSubmit={handleOtpSubmit} style={formStyle}>
-          <h3>Vérification OTP</h3>
+          <h3>OTP verification</h3>
           <input name="email" placeholder="Email" type="email" value={otpForm.email} readOnly style={inputStyle} />
           <input name="otp" placeholder="OTP reçu par email" value={otpForm.otp} onChange={handleOtpChange} required style={inputStyle} />
-          <button type="submit" style={btnStyle}>Vérifier OTP</button>
-          <button type="button" onClick={handleBack} style={btnStyleSec}>Retour</button>
+          <button type="submit" style={btnStyle}>Check OTP</button>
+          <button type="button" onClick={handleBack} style={btnStyleSec}>Return</button>
           <div style={msgStyle}>{message}</div>
         </form>
       )}
 
       {step === "list" && (
         <div>
-          <h3>Liste des utilisateurs</h3>
+          <h3>List of users</h3>
           {users.length === 0 ? (
-            <div style={msgStyle}>Aucun utilisateur inscrit pour le moment.</div>
+            <div style={msgStyle}>No registered users at the moment.</div>
           ) : (
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ background: "#e3eafc" }}>
-                  <th>Nom</th>
+                  <th>Name</th>
                   <th>Email</th>
-                  <th>Téléphone</th>
+                  <th>Phone</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -242,40 +242,40 @@ function App() {
                     <td>{u.email}</td>
                     <td>{u.phone}</td>
                     <td>
-                      <button onClick={() => handleShowDetail(u)} style={btnTable}>Voir</button>
-                      <button onClick={() => handleEditUser(u)} style={btnTable}>Modifier</button>
-                      <button onClick={() => handleDeleteUser(u)} style={btnTableDel}>Supprimer</button>
+                      <button onClick={() => handleShowDetail(u)} style={btnTable}>View</button>
+                      <button onClick={() => handleEditUser(u)} style={btnTable}>Modify</button>
+                      <button onClick={() => handleDeleteUser(u)} style={btnTableDel}>Delete</button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           )}
-          <button onClick={handleBack} style={btnStyleSec}>Retour</button>
+          <button onClick={handleBack} style={btnStyleSec}>Return</button>
           <div style={msgStyle}>{message}</div>
         </div>
       )}
 
       {step === "detail" && selectedUser && (
         <div>
-          <h3>Détail utilisateur</h3>
-          <p><b>Nom :</b> {selectedUser.name}</p>
-          <p><b>Adresse :</b> {selectedUser.address}</p>
+          <h3>User detail</h3>
+          <p><b>Name :</b> {selectedUser.name}</p>
+          <p><b>Address :</b> {selectedUser.address}</p>
           <p><b>Email :</b> {selectedUser.email}</p>
-          <p><b>Téléphone :</b> {selectedUser.phone}</p>
-          <button onClick={handleBack} style={btnStyleSec}>Retour</button>
+          <p><b>Phone :</b> {selectedUser.phone}</p>
+          <button onClick={handleBack} style={btnStyleSec}>Return</button>
         </div>
       )}
 
       {step === "edit" && (
         <form onSubmit={handleEditSubmit} style={formStyle}>
-          <h3>Modifier utilisateur</h3>
+          <h3>Edit user</h3>
           <input name="name" placeholder="Nom" value={editForm.name || ""} onChange={handleEditChange} required style={inputStyle} />
           <input name="address" placeholder="Adresse" value={editForm.address || ""} onChange={handleEditChange} required style={inputStyle} />
           <input name="phone" placeholder="Téléphone" value={editForm.phone || ""} onChange={handleEditChange} required style={inputStyle} />
           <input name="email" placeholder="Email" type="email" value={editForm.email || ""} onChange={handleEditChange} required style={inputStyle} />
-          <button type="submit" style={btnStyle}>Enregistrer</button>
-          <button type="button" onClick={handleBack} style={btnStyleSec}>Retour</button>
+          <button type="submit" style={btnStyle}>Save</button>
+          <button type="button" onClick={handleBack} style={btnStyleSec}>Return</button>
           <div style={msgStyle}>{message}</div>
         </form>
       )}
